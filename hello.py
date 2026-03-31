@@ -6,6 +6,7 @@ ASCII-art rectangle around a given text string and a `main()` entry
 point that prints the box to stdout.
 """
 
+import shutil
 def draw_box(text, padding=1):
     """Return `text` surrounded by an ASCII rectangle.
 
@@ -30,9 +31,26 @@ def draw_box(text, padding=1):
 
 
 def main():
-    # Create the box containing the word "Hello" and print it.
+    # Create the box containing the word "Hello" and center it
     box = draw_box("Hello")
-    print(box)
+    lines = box.splitlines()
+
+    # get terminal size (columns, lines)
+    term_size = shutil.get_terminal_size(fallback=(80, 24))
+    term_width, term_height = term_size.columns, term_size.lines
+
+    box_width = max(len(line) for line in lines)
+    box_height = len(lines)
+
+    # compute padding to center the box
+    left_padding = max((term_width - box_width) // 2, 0)
+    top_padding = max((term_height - box_height) // 2, 0)
+
+    # print vertical padding, then each line with horizontal padding
+    print("\n" * top_padding, end="")
+    pad = " " * left_padding
+    for line in lines:
+        print(pad + line)
 
 
 if __name__ == "__main__":
